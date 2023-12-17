@@ -1,3 +1,15 @@
+#############################################################################################################################
+#                                                                                                                           #
+# Este programa hace una funcion fácil per útil, por lo menos en mi caso. Puedes matar los procesos de una aplicación       #
+# que escojas, parecido al gestor de trabajos de Windows. Para conseguirlo se consigue el ID del proceso y el mismo script  #
+# finaliza todos los procesos asignados a ese nombre.                                                                       #
+#                                                                                                                           #
+# Uso del comando: bash kill_proces.sh <nombre proceso/aplicación>                                                          #
+#                                                                                                                           #
+#############################################################################################################################
+
+
+
 #!/bin/bash
 
 # Comprobación del parametro del proceso
