@@ -41,7 +41,7 @@ read ghUser
 clear
 echo "##### Clonando repositorio en el Escritorio de $USER"
 cd ~
-git clone git@github.com:$ghUser/introprg.git
+git clone -o StrictHostKeyChecking=no git@github.com:$ghUser/introprg.git
 clear
 
 echo "##### Repositorio clonado en /home/$USER/introprg #####"
