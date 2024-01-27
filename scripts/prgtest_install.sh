@@ -37,20 +37,47 @@ read ghUser
 # echo "Link SSH copiado: "
 # read repository # Problems with name: user, github, link
 
-#### CLONE REPOSITORY ####
+#### CREATE SSH KEY & ADD TO GITHUB ####
+
+Key="~/.ssh/githubKey_byZiccur"
+
+if [ -e "$Key" ]; then
+    echo "Parece que ya tienes una clave con el mismo nombre, el programa usará esa"
+else
+    ssh-keygen -t ed25519 -f "$Key" -N "" > /dev/null 2>&1
+    echo "Clave creada en el directorio '$HOME/.ssh/', recuerda no compartirla con nadie"
+fi
+sleep 4
+
+firefox https://hackmd.io/@Yeray2/ssh-github &
 clear
-echo "##### Clonando repositorio en el Escritorio de $USER"
+
+# Wait user feedback
+echo "Mira la página web enviada y cuando quieras el código, presiona la tecla ESPACIO"
+
+while true; do
+    read -n 1 input
+    if [[ ! $input =~ [[:space:]] ]]; then
+        break
+    fi
+done
+
+## CREATE A TXT WITH PUB KEY AND PRINT IT ON GEDIT ##
+cat ~/.ssh/githubKey_byZiccur.pub > /tmp/ziccur.key
+echo "CIERRA ESTA VENTANA DESPUES DE AÑADIR LA CLAVE" >> /tmp/ziccur.key
+gedit /tmp/ziccur.key
 
 
-
-cd ~
-GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git clone git@github.com:$ghUser/introprg.git
+#### CLONE REPOSITORY CHECK AND CLONE ####
 clear
-
-echo "##### Repositorio clonado en /home/$USER/introprg #####"
-
-
-
-
-
-
+folder="$HOME/introprg"
+if [[ -d "$folder" ]]; then
+    echo "##### \e[32mYa tenias el repositorio clonado en $HOME,\e[0m sino lo tienes puede haber un problema con el script (Ponte en contacto con los colaboradores) #####"
+    sleep 5
+    clear
+else
+    
+    echo -e "#### Repositorio Local no encontrado. Clonando repositorio de: \e[34mgit@github.com:$ghUser/introprg.git\e[0m "
+    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+    git clone git@github.com:$ghUser/introprg.git $HOME/introprg
+fi
