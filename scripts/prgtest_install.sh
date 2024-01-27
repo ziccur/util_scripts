@@ -49,7 +49,7 @@ else
 fi
 sleep 4
 
-firefox https://hackmd.io/@Yeray2/ssh-github &
+firefox "https://hackmd.io/@Yeray2/ssh-github" > /dev/null 2>&1 &
 clear
 
 # Wait user feedback
