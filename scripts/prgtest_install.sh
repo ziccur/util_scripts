@@ -44,7 +44,7 @@ Key="~/.ssh/githubKey_byZiccur"
 if [ -e "$Key" ]; then
     echo "Parece que ya tienes una clave con el mismo nombre, el programa usará esa"
 else
-    ssh-keygen -t ed25519 -f "$Key" -N "" > /dev/null 2>&1
+    ssh-keygen -t ed25519 -f ~/.ssh/githubKey_byZiccur -N "" > /dev/null 2>&1
     echo "Clave creada en el directorio '$HOME/.ssh/', recuerda no compartirla con nadie"
 fi
 sleep 4
