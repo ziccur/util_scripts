@@ -52,15 +52,12 @@ sleep 4
 firefox "https://hackmd.io/@Yeray2/ssh-github" > /dev/null 2>&1 &
 clear
 
-# Wait user feedback
-echo "Mira la página web enviada y cuando quieras el código, presiona la tecla ESPACIO"
-
-while true; do
-    read -n 1 input
-    if [[ ! $input =~ [[:space:]] ]]; then
-        break
-    fi
+for i in {10..1}
+do
+   echo "Tiempo para mostrar la clave: $i"
+   sleep 1
 done
+
 
 ## CREATE A TXT WITH PUB KEY AND PRINT IT ON GEDIT ##
 cat ~/.ssh/githubKey_byZiccur.pub > /tmp/ziccur.key
@@ -81,3 +78,8 @@ else
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     git clone git@github.com:$ghUser/introprg.git $HOME/introprg
 fi
+
+bash ~/introprg/.introprg/configura_introprg.sh
+bash ~/introprg/.introprg/install_junit.sh
+sleep 1
+source ~/.bashrc
