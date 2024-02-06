@@ -25,17 +25,34 @@ def encript_files():
     # using the generated key
     fernet = Fernet(key)
     
-    # opening the original file to encrypt
-    with open('nba.csv', 'rb') as file:
-        original = file.read()
+    for item in fileList:
+        # opening the original file to encrypt
+        with open( item, 'rb') as file:
+            original = file.read()
+            
+        # encrypting the file
+        encrypted = fernet.encrypt(original)
         
-    # encrypting the file
-    encrypted = fernet.encrypt(original)
+        # opening the file in write mode and 
+        # writing the encrypted data
+        with open(item, 'wb') as encrypted_file:
+            encrypted_file.write(encrypted)
+
+def desencrypt_files():
+    # using the key
+    fernet = Fernet(key)
     
-    # opening the file in write mode and 
-    # writing the encrypted data
-    with open('nba.csv', 'wb') as encrypted_file:
-        encrypted_file.write(encrypted)
+    # opening the encrypted file
+    with open('nba.csv', 'rb') as enc_file:
+        encrypted = enc_file.read()
+    
+    # decrypting the file
+    decrypted = fernet.decrypt(encrypted)
+    
+    # opening the file in write mode and
+    # writing the decrypted data
+    with open('nba.csv', 'wb') as dec_file:
+        dec_file.write(decrypted)
 
 
 # Add files to the list
@@ -75,6 +92,7 @@ def choose():
         route()
         add_files_to_list(directory)
         key()
+        encript_files()
         print("Encript")
     elif(a == "2"):
         #Calling the function
