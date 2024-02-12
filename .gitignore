@@ -1,0 +1,13 @@
+#! Hi to owr gitignore :)
+
+#? Ignore the .idea folder
+.idea/
+
+#? Ignore the .vscode folder
+.vscode/
+
+#? Ignore class files (form Java)
+*.class
+
+#? Ignore tmp files from scripts
+0
