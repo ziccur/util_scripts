@@ -1,10 +1,10 @@
-#?#############################################################
-#? This script is used to run the prgtest for all the folders #
-#? Prgtest is a software for educational purposes, created by #
-#?           gatrenat (https://github.com/gatrenat)           #
-#?                                                            #
-#?    This script use Better Comments plugins for VSCode      #
-#?#############################################################
+#?############################################################################################################################
+#?                                This script is used to run the prgtest for all the folders                                 #
+#?              Prgtest is a software for educational purposes, created by gatrenat (https://github.com/gatrenat)            #
+#?                                                                                                                           #
+#?                                    This script use Better Comments extension for VSCode                                   #
+#?############################################################################################################################
+#* By zciccur & Snr1s3 - 13/02/2024
 
 #! Color defines
     green='\033[0;32m'
@@ -17,16 +17,23 @@
     #? Function to specific folder and run prgtest
     runPrgtest(){
         
-        #! Sleep to avoid errors in some computers
-        #sleep 0.5
         cd $1
+
+        rm /tmp/output.prgtest 2>/dev/null
+        
         javac *.java > /dev/null 2>&1
-        prgtest >> /tmp/output.prgtest 2>> /tmp/error.prgtest
-        if [ "$?" -eq 0 ]; then
-            return 0  
-        else
-            return 1  #! if the last command wasn't successful
-        fi
+        prgtest >> /tmp/output.prgtest
+
+        #! Check line by line if the output of prgtest contains the word "FALLA"
+        while read -r outputLine; do
+            if [[ $outputLine == *"FALLA"* ]] || [[ $outputLine == *"ERROR"* ]]; then
+                return 1
+                break
+            else 
+                return 0
+            fi
+        done < /tmp/output.prgtest
+        
     }
 
     #? Function to print banner of the script
@@ -52,8 +59,8 @@
     }
 
 
-#! Main
 
+#* Main
 #! Print banner
 printBanner
 
@@ -75,8 +82,6 @@ read section
 if ls "$path" >/dev/null 2>&1; then
     
     #! Delete output files if they exist
-    rm /tmp/output.prgtest 2>/dev/null
-    rm /tmp/error.prgtest 2>/dev/null
     rm /tmp/resultPrgtestSearch 2>/dev/null
 
     find $path/$section* -type d >> /tmp/resultPrgtestSearch 2>/dev/null
@@ -89,22 +94,47 @@ if ls "$path" >/dev/null 2>&1; then
     #! Call prgtest for each folder
     if wc -l < /tmp/resultPrgtestSearch > 0; then
         while read -r line; do
-            #! Call function to specific folder and run prgtest
-            runPrgtest $line 
+            
 
             #! Get the name of the folder and modify it to show only the section
             name=$(basename $line)
             name=${name:0:5}
-
+            error="false"
+            #! Call function to specific folder and run prgtest
+            runPrgtest $line 
             #! Check if the last command was successful if wasn't break the loop
-            if [ "$?" -eq 0 ]; then
-                echo -e "$name ${green}PASSA${reset}"
-            else
-                echo -e $name "${red}NO PASSA${reset}"
-                break
 
+            if grep -q "ERROR" /tmp/output.prgtest; then
+                echo -e $name "${red}NO PASSA${reset}"
+                cat /tmp/output.prgtest
+                error="true"
+            else
+                echo -e "$name ${green}PASSA${reset}"
             fi
+            
+            
+            if [ "$error" == "true" ]; then
+                echo -e "${red_bold}Se ha encontrado un error en $(basename $line) quieres continuar (S/N) ${reset}"
+                read response
+
+                while [ true ]; do
+                    if [ "$response" == "S" ] || [ "$response" == "s" ]; then
+                        break
+                    elif [ "$response" == "N" ] || [ "$response" == "n" ]; then
+                        exit 1
+                    else
+                        echo -e "${red_bold}Por favor, introduce una respuesta válida (S/N)${reset}"
+                        read response
+                    fi
+                done
+            fi
+
+            
+
+            
+
         done < /tmp/resultPrgtestSearch
+
 
     else
         echo "No se encontraron carpetas con el nombre $section*"
