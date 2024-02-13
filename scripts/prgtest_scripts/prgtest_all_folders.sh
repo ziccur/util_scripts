@@ -10,6 +10,8 @@
     green='\033[0;32m'
     reset='\033[0m'
     red='\033[0;31m'
+    blue='\033[0;36m'
+    red_bold='\033[1;31m'
 
 #! Declare functions
     #? Function to specific folder and run prgtest
@@ -24,13 +26,47 @@
             return 0  
         else
             return 1  #! if the last command wasn't successful
-    fi
+        fi
+    }
+
+    #? Function to print banner of the script
+    printBanner(){
+        clear
+        echo -e "${blue}###############################################################################${reset}" 
+        echo -e "${blue}                 _            _           _ _ _____     _     _               ${reset}"
+        echo -e "${blue} _ __  _ __ __ _| |_ ___  ___| |_    __ _| | |  ___|__ | | __| | ___ _ __ ___ ${reset}"
+        echo -e "${blue}| '_ \| '__/ _' | __/ _ \/ __| __|  / _' | | | |_ / _ \| |/ _' |/ _ \ '__/ __|${reset}"
+        echo -e "${blue}| |_) | | | (_| | ||  __/\__ \ |_  | (_| | | |  _| (_) | | (_| |  __/ |  \__ \\ ${reset}"
+        echo -e "${blue}| .__/|_|  \__, |\__\___||___/\__|  \__,_|_|_|_|  \___/|_|\__,_|\___|_|  |___/${reset}"
+        echo -e "${blue}|_|        |___/                                                              ${reset}"
+        echo -e "${blue}############################ By: zciccur & Snr1s3 ############################${reset}"  
+    }
+
+    #? Function to check if is a valid folder
+    checkFolder(){
+        if [ -d "$1" ]; then
+            return 0
+        else
+            return 1
+        fi
     }
 
 
 #! Main
-echo "Indica la ruta absoluta de la carpeta "introprg":\nEjemplo: /home/ziccur/Documents/introprg"
+
+#! Print banner
+printBanner
+
+echo ""
+echo "Indica la ruta absoluta de la carpeta "introprg":"
+echo -e "${green}Ejemplo: /home/ziccur/Documents/introprg${reset}"
+echo ""
 read path
+
+if ! checkFolder $path; then
+    echo -e "${red_bold}La carpeta no existe, prueba a ejecutar el script de nuevo.${reset}"
+    exit 1
+fi
 
 echo "Indica la sección que quieres (31,33) o (3 para todos): "
 read section
@@ -43,7 +79,12 @@ if ls "$path" >/dev/null 2>&1; then
     rm /tmp/error.prgtest 2>/dev/null
     rm /tmp/resultPrgtestSearch 2>/dev/null
 
-    find $path/$section* -type d >> /tmp/resultPrgtestSearch
+    find $path/$section* -type d >> /tmp/resultPrgtestSearch 2>/dev/null
+
+    if [ "$?" -ne 0 ]; then
+        echo -e "${red_bold}No se encontraron carpetas que concidan con:${reset} $section"
+        exit 1
+    fi
 
     #! Call prgtest for each folder
     if wc -l < /tmp/resultPrgtestSearch > 0; then
